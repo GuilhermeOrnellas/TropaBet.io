@@ -13,7 +13,7 @@
             text-align: center;
             padding: 20px;
             display: flex;
-            align-items: center;          
+            align-items: center;
             justify-content: center;
         }
         .container {
@@ -22,9 +22,7 @@
             width: 100%;
             padding: 20px;
             border-radius: 10px;
-
-            margin-top:70px;
-            margin-right:70px ;
+            margin-top: 70px;
         }
         #roulette-container {
             position: relative;
@@ -81,9 +79,6 @@
             border-radius: 5px;
             margin-top: 20px;
         }
-        #spin-button:hover {
-            background-color: #21a1f1;
-        }
         #balance, #message {
             font-size: 24px;
             margin-top: 20px;
@@ -95,7 +90,6 @@
         .radio-group {
             margin: 10px 0;
         }
-
     </style>
 </head>
 <body>
@@ -124,44 +118,38 @@
         </div>
       </div>
       <div tabindex="0" onclick="closeSidebar()" class="content" id="content"></div>
-
+    
     <div class="container">
-    <h1>Roleta de Cassino</h1>
-    <div id="balance">Saldo: R$ 100</div>
+        <h1>Roleta de Cassino</h1>
+        <div id="balance">Saldo: R$ 100</div>
 
-    <div id="roulette-container">
-        <div id="pointer"></div>
-        <div id="roulette-wheel">
-
+        <div id="roulette-container">
+            <div id="pointer"></div>
+            <div id="roulette-wheel"></div>
         </div>
+
+        <div id="bet-options">
+            <div class="radio-group">
+                <label>Aposte em uma cor:</label>
+                <input type="radio" name="bet-color" value="red"> Vermelho
+                <input type="radio" name="bet-color" value="black"> Preto
+                <input type="radio" name="bet-color" value="green"> Verde
+            </div>
+            <div class="radio-group">
+                <label for="bet-number">Ou escolha um número (0-36):</label>
+                <input type="number" id="bet-number" min="0" max="36">
+            </div>
+            <button id="spin-button">Girar</button>
+        </div>
+
+        <div id="message"></div>
     </div>
 
-    <div id="bet-options">
-        <div class="radio-group">
-            <label>Aposte em uma cor:</label>
-            <input type="radio" name="bet-color" value="red"> Vermelho
-            <input type="radio" name="bet-color" value="black"> Preto
-            <input type="radio" name="bet-color" value="green"> Verde
-        </div>
-        <div class="radio-group">
-            <label for="bet-number">Ou escolha um número (0-36):</label>
-            <input type="number" id="bet-number" min="0" max="36">
-        </div>
-        <button id="spin-button">Girar</button>
-    </div>
-
-
-    <div id="message"></div>
-    </div>
     <script>
         const balanceElement = document.getElementById('balance');
         const messageElement = document.getElementById('message');
         const rouletteWheel = document.getElementById('roulette-wheel');
-        const pointer = document.getElementById('pointer');
         let balance = 100;
-
-        const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
-        const greenNumbers = [0];
 
         function createRouletteNumbers() {
             for (let i = 0; i <= 36; i++) {
@@ -169,14 +157,13 @@
                 numberDiv.classList.add('roulette-number');
                 numberDiv.innerText = i;
 
-                if (greenNumbers.includes(i)) {
+                if (i === 0) {
                     numberDiv.classList.add('green');
-                } else if (redNumbers.includes(i)) {
-                    numberDiv.classList.add('red');
-                } else {
+                } else if (i % 2 === 0) {
                     numberDiv.classList.add('black');
+                } else {
+                    numberDiv.classList.add('red');
                 }
-
 
                 const angle = (i / 37) * 360;
                 numberDiv.style.transform = `rotate(${angle}deg) translate(0, -150px) rotate(-${angle}deg)`;
@@ -186,8 +173,18 @@
         }
 
         function getColor(number) {
-            if (greenNumbers.includes(number)) return "green";
-            return redNumbers.includes(number) ? "red" : "black";
+            if (number === 0) return "green";
+            return number % 2 === 0 ? "black" : "red";
+        }
+
+        function resetRotation() {
+            rouletteWheel.style.transition = 'none'; 
+            rouletteWheel.style.transform = 'rotate(0deg)'; 
+
+         
+            rouletteWheel.offsetHeight; 
+
+            rouletteWheel.style.transition = 'transform 3s ease-out';
         }
 
         function spinRoulette() {
@@ -210,7 +207,12 @@
             const winningNumber = Math.floor(Math.random() * 37);
             const winningColor = getColor(winningNumber);
             const degrees = (winningNumber / 37) * 360 + 3600;
-            rouletteWheel.style.transform = `rotate(-${degrees}deg)`;
+
+            resetRotation(); 
+
+            setTimeout(() => {
+                rouletteWheel.style.transform = `rotate(-${degrees}deg)`;
+            }, 50);
 
             setTimeout(() => {
                 let winAmount = 0;
@@ -233,6 +235,6 @@
         document.getElementById('spin-button').addEventListener('click', spinRoulette);
         createRouletteNumbers();
     </script>
-     <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
